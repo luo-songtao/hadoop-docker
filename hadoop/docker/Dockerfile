@@ -36,6 +36,9 @@ RUN cd /root/ && \
 RUN apt-get install -y openjdk-8-jdk && apt-get clean && \
     echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> /root/.bashrc
 
+RUN echo "export PATH=\$PATH:/apache/hadoop/bin" >> /etc/profile && \
+    echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> /etc/profile
+
 ADD entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]

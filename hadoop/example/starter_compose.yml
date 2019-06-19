@@ -1,0 +1,40 @@
+version: "3.7"
+services:
+  hadoop-master:
+    image: hadoop:2.9.2
+    hostname: hadoop-master
+    container_name: hadoop-master
+    volumes:
+      - /Users/luo-songtao/workspace/hadoop-ecosystem-docker/hadoop/example/hadoop_cluster_ssh/hadoop-master:/root/.ssh
+      - /Users/luo-songtao/workspace/hadoop-ecosystem-docker/hadoop/example/hadoop-config/common/:/apache/hadoop/etc/hadoop/
+      - /Users/luo-songtao/workspace/hadoop-ecosystem-docker/hadoop/example/data/hadoop-master:/data/
+    ports:
+      - 50070:50070
+      - 8088:8088
+  hadoop-slave1:
+    image: hadoop:2.9.2
+    hostname: hadoop-slave1
+    container_name: hadoop-slave1
+    volumes:
+      - /Users/luo-songtao/workspace/hadoop-ecosystem-docker/hadoop/example/hadoop_cluster_ssh/hadoop-slave1:/root/.ssh
+      - /Users/luo-songtao/workspace/hadoop-ecosystem-docker/hadoop/example/hadoop-config/common/:/apache/hadoop/etc/hadoop/
+      - /Users/luo-songtao/workspace/hadoop-ecosystem-docker/hadoop/example/data/hadoop-slave1:/data/
+  hadoop-slave2:
+    image: hadoop:2.9.2
+    hostname: hadoop-slave2
+    container_name: hadoop-slave2
+    volumes:
+      - /Users/luo-songtao/workspace/hadoop-ecosystem-docker/hadoop/example/hadoop_cluster_ssh/hadoop-slave2:/root/.ssh
+      - /Users/luo-songtao/workspace/hadoop-ecosystem-docker/hadoop/example/hadoop-config/common/:/apache/hadoop/etc/hadoop/
+      - /Users/luo-songtao/workspace/hadoop-ecosystem-docker/hadoop/example/data/hadoop-slave2:/data/
+  hadoop-slave3:
+    image: hadoop:2.9.2
+    hostname: hadoop-slave3
+    container_name: hadoop-slave3
+    volumes:
+      - /Users/luo-songtao/workspace/hadoop-ecosystem-docker/hadoop/example/hadoop_cluster_ssh/hadoop-slave3:/root/.ssh
+      - /Users/luo-songtao/workspace/hadoop-ecosystem-docker/hadoop/example/hadoop-config/common/:/apache/hadoop/etc/hadoop/
+      - /Users/luo-songtao/workspace/hadoop-ecosystem-docker/hadoop/example/data/hadoop-slave3:/data/
+networks:
+  default:
+    name: hadoop-cluster

@@ -1,0 +1,29 @@
+version: "3.7"
+services:
+  hadoop-master:
+    image: hadoop:2.9.2
+    hostname: hadoop-master
+    container_name: hadoop-master
+    volumes:
+      - /Users/luo-songtao/workspace/hadoop-ecosystem-docker/hadoop/example/hadoop_cluster_ssh/hadoop-master:/root/.ssh
+  hadoop-slave1:
+    image: hadoop:2.9.2
+    hostname: hadoop-slave1
+    container_name: hadoop-slave1
+    volumes:
+      - /Users/luo-songtao/workspace/hadoop-ecosystem-docker/hadoop/example/hadoop_cluster_ssh/hadoop-slave1:/root/.ssh
+  hadoop-slave2:
+    image: hadoop:2.9.2
+    hostname: hadoop-slave2
+    container_name: hadoop-slave2
+    volumes:
+      - /Users/luo-songtao/workspace/hadoop-ecosystem-docker/hadoop/example/hadoop_cluster_ssh/hadoop-slave2:/root/.ssh
+  hadoop-slave3:
+    image: hadoop:2.9.2
+    hostname: hadoop-slave3
+    container_name: hadoop-slave3
+    volumes:
+      - /Users/luo-songtao/workspace/hadoop-ecosystem-docker/hadoop/example/hadoop_cluster_ssh/hadoop-slave3:/root/.ssh
+networks:
+  default:
+    name: hadoop-cluster
