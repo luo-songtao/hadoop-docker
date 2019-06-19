@@ -3,47 +3,20 @@ import time
 
 import docker
 
-YML_HEADER = '''\
-version: "{version}"
-services:
-'''
-
-YML_NODE_FORMAT = '''\
-  {node_name}:
-    image: {image}
-    hostname: {node_name}
-    container_name: {node_name}
-    volumes:
-      - {node_ssh_dir}:/root/.ssh
-'''
+from config import CLUSTER, COMPOSE_DIR, CLUSTER_SSH_DIR, \
+    SSH_INIT_COMPOSE_YML_NAME, SSH_INIT_YML_HEADER, SSH_INIT_YML_NODE_FORMAT
 
 
-class Creater(object):
+class SSHInitializer(object):
 
-    COMPOSE_YML_NAME = "creater.yml"
-
-    def __init__(self, cluster, compose_dir, ssh_dir, version="3.7", image="hadoop:2.9.2"):
-        self.master = cluster["master"]
-        self.slaves = cluster["slaves"]
-        self.version = version
-        self.image = image
+    def __init__(self, nodes_config, compose_dir, ssh_dir):
+        self.master = nodes_config["master"]["node_name"]
+        self.slaves = [i["node_name"] for i in nodes_config["slaves"]]
         self.compose_dir = compose_dir
         self.ssh_dir = ssh_dir
 
         self.nodes = [self.master]+self.slaves
-        self.compose_yml_path = os.path.join(self.compose_dir, self.COMPOSE_YML_NAME)
-
-    def create_docker_compose(self):
-        '''创建集群初始化docker-compose文件'''
-        yml_data = ""
-        yml_data += YML_HEADER.format(version=self.version)
-
-        for node_name in self.nodes:
-            node_ssh_dir = os.path.join(self.ssh_dir, node_name)
-            yml_data += YML_NODE_FORMAT.format(image=self.image, node_name=node_name, node_ssh_dir=node_ssh_dir)
-
-        with open(self.compose_yml_path, "w") as f:
-            f.write(yml_data)
+        self.ssh_init_compose_yml_path = os.path.join(self.compose_dir, SSH_INIT_COMPOSE_YML_NAME)
 
     def init_ssh(self):
         '''
@@ -51,7 +24,7 @@ class Creater(object):
         注意：该方法只用执行一次，一旦创建出密钥文件和授权文件后则不需要再执行
         '''
         # 初次启动集群
-        os.system("docker-compose -f {} up -d ".format(self.compose_yml_path))
+        os.system("docker-compose -f {} up -d ".format(self.ssh_init_compose_yml_path))
 
         client = docker.from_env()
         containers = {node_name:client.containers.get(node_name) for node_name in self.nodes}
@@ -108,5 +81,11 @@ class Creater(object):
                     value = container.exec_run("ssh-keyscan -t rsa {},0.0.0.0".format(_node_name)).output
                     f.write(value)
 
-        os.system("docker-compose -f {} down".format(self.compose_yml_path))
+        os.system("docker-compose -f {} down".format(self.ssh_init_compose_yml_path))
 
+
+
+if __name__ == '__main__':
+    # cluster, compose_dir, ssh_dir
+    sshInitializer = SSHInitializer(CLUSTER, COMPOSE_DIR, CLUSTER_SSH_DIR)
+    sshInitializer.init_ssh()
